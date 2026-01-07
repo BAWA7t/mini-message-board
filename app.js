@@ -7,6 +7,7 @@ const indexRouter = require("./routes/index");
 
 //Start express
 const app = express();
+const PORT = process.env.PORT || 3000;
 
 //set up ejs template engine
 app.set("views", path.join(__dirname, "views"));
@@ -19,6 +20,6 @@ app.use(express.urlencoded({ extended: true }));
 app.use("/", indexRouter);
 
 //start server
-app.listen(3000, () => {
+app.listen(PORT, () => {
   console.log("Server running on http://localhost:3000");
 });
