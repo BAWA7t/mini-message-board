@@ -1,7 +1,9 @@
 const express = require("express");
+const { body, validationResult } = require("express-validator");
+
 const router = express.Router();
 
-//Sample message
+// Sample messages
 const messages = [
   {
     text: "Hello there",
@@ -15,29 +17,50 @@ const messages = [
   },
 ];
 
-//Get the home page
+// Home page
 router.get("/", (req, res) => {
-  res.render("index", { title: "Mini message Board", messages });
+  res.render("index", { title: "Mini Message Board", messages });
 });
 
-//Get new message form
+// New message form
 router.get("/new", (req, res) => {
-  res.render("new", { title: "New Message" });
+  res.render("new", { title: "New Message", errors: [], formData: {} });
 });
 
-//Post new Message
-router.post("/new", (req, res) => {
-  const { messageText, messageUser } = req.body;
+// Create message
+router.post(
+  "/new",
+  [
+    body("messageUser").trim().notEmpty().withMessage("Name is required"),
+    body("messageText")
+      .trim()
+      .isLength({ min: 3 })
+      .withMessage("Message must be at least 3 characters"),
+  ],
+  (req, res) => {
+    const errors = validationResult(req);
 
-  messages.push({
-    text: messageText,
-    user: messageUser,
-    added: new Date(),
-  });
+    if (!errors.isEmpty()) {
+      return res.render("new", {
+        title: "New Message",
+        errors: errors.array(),
+        formData: req.body,
+      });
+    }
 
-  res.redirect("/");
-});
+    const { messageText, messageUser } = req.body;
 
+    messages.push({
+      text: messageText.trim(),
+      user: messageUser.trim(),
+      added: new Date(),
+    });
+
+    res.redirect("/");
+  }
+);
+
+// Message details
 router.get("/messages/:id", (req, res) => {
   const messageId = req.params.id;
   const message = messages[messageId];

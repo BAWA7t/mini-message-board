@@ -1,24 +1,41 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title><%= title %></title>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title><%= title %></title>
 </head>
 <body>
-    <h1>Add a New message</h1>
+  <h1>Add a New Message</h1>
 
-    <form action="/new" method="POST">
-        <input type="text" name="messageUser" placeholder="Your name" required>
-        <br><br>
+  <% if (errors && errors.length) { %>
+    <ul>
+      <% errors.forEach(e => { %>
+        <li style="color:red;"><%= e.msg %></li>
+      <% }) %>
+    </ul>
+  <% } %>
 
-        <textarea name="messageText" placeholder="Your message" required></textarea>
-        <br><br>
+  <form action="/new" method="POST">
+    <input
+      type="text"
+      name="messageUser"
+      placeholder="Your name"
+      value="<%= formData?.messageUser || '' %>"
+      required
+    >
+    <br><br>
 
-        <button type="submit">Send</button>
+    <textarea
+      name="messageText"
+      placeholder="Your message"
+      required
+    ><%= formData?.messageText || '' %></textarea>
+    <br><br>
 
-    </form>
+    <button type="submit">Send</button>
+  </form>
 
-    <a href="/">Go Back</a>
+  <a href="/">Go Back</a>
 </body>
 </html>
